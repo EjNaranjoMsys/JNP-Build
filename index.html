@@ -64,42 +64,34 @@
       }
       loadingBar.style.display = "block";
 
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                this.unityInstance = unityInstance;
-                loadingBar.style.display = "none";
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);
-
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          this.unityInstance = unityInstance;
+          loadingBar.style.display = "none";
 
         if (typeof document.hidden !== "undefined") {
-            document.addEventListener("visibilitychange", handleVisibilityChange);
+          document.addEventListener("visibilitychange", handleVisibilityChange);
         }
 
         function handleVisibilityChange() {
-            if (document.hidden) {
-                unityInstance.SendMessage("Data Manager", "ForceDisconnect");
-            }
+          if (document.hidden) {
+            unityInstance.SendMessage("Data Manager", "ForceDisconnect");
+          }
         }
 
-        //unityInstance.Quit().then(function () {
-        //    unityInstance.SendMessage("Data Manager", "OnQuit");
-        //});
+        unityInstance.Quit().then(function () {
+          unityInstance.SendMessage("Data Manager", "OnQuit");
+        });
 
-        function IdleTimeout(timeout) {
-            unityInstance.SendMessage("Data Manager", "IdleDisconnect");
-        }
-
-        const idleId = requestIdleCallback(IdleTimeout, { timeout: 60000 });
-        cancelIdleCallback(idleId);
-
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
