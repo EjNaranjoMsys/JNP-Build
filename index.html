@@ -87,13 +87,6 @@
           unityInstance.SendMessage("Data Manager", "OnQuit");
         });
 
-        function IdleTimeout(timeout) {
-          unityInstance.SendMessage("Data Manager", "IdleDisconnect");
-        }
-
-        const idleId = requestIdleCallback(IdleTimeout, { timeout: 60000 });
-        cancelIdleCallback(idleId);
-
         }).catch((message) => {
           alert(message);
         });
