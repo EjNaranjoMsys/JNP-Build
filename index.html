@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Ayos | Jnp-Multip</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
+    <link rel="stylesheet" href="TemplateData/style.css" />
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=450 height=900></canvas>
+      <canvas id="unity-canvas" width="450" height="900"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -29,7 +29,7 @@
         memoryUrl: buildUrl + "/",
         symbolsUrl: buildUrl + "/",
         streamingAssetsUrl: "StreamingAssets",
-        companyName:  "MultisysCorp",
+        companyName: "MultisysCorp",
         productName: "Jnp-Multip",
         productVersion: "1",
       };
@@ -46,59 +46,61 @@
       // config.matchWebGLToCanvasSize = false;
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
+        var meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content =
+          "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
         container.className = "unity-mobile";
 
         // To lower canvas resolution on mobile devices to gain some
         // performance, uncomment the following line:
         // config.devicePixelRatio = 1;
 
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
       } else {
         canvas.style.width = "450px";
         canvas.style.height = "900px";
       }
       loadingBar.style.display = "block";
 
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                this.unityInstance = unityInstance;
-                loadingBar.style.display = "none";
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        })
+          .then((unityInstance) => {
+            this.unityInstance = unityInstance;
+            loadingBar.style.display = "none";
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      };
+      document.body.appendChild(script);
 
+      if (typeof document.hidden !== "undefined") {
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+      }
 
-        if (typeof document.hidden !== "undefined") {
-            document.addEventListener("visibilitychange", handleVisibilityChange);
+      function handleVisibilityChange() {
+        if (document.hidden) {
+          unityInstance.SendMessage("Data Manager", "ForceDisconnect");
         }
+      }
 
-        function handleVisibilityChange() {
-            if (document.hidden) {
-                unityInstance.SendMessage("Data Manager", "ForceDisconnect");
-            }
-        }
+      //unityInstance.Quit().then(function () {
+      //    unityInstance.SendMessage("Data Manager", "OnQuit");
+      //});
 
-        //unityInstance.Quit().then(function () {
-        //    unityInstance.SendMessage("Data Manager", "OnQuit");
-        //});
+      function IdleTimeout(timeout) {
+        unityInstance.SendMessage("Data Manager", "IdleDisconnect");
+      }
 
-        function IdleTimeout(timeout) {
-            unityInstance.SendMessage("Data Manager", "IdleDisconnect");
-        }
-
-        const idleId = requestIdleCallback(IdleTimeout, { timeout: 60000 });
-        cancelIdleCallback(idleId);
+      const idleId = requestIdleCallback(IdleTimeout, { timeout: 3000 });
+      cancelIdleCallback(idleId);
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
