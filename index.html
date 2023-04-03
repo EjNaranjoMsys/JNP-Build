@@ -97,8 +97,13 @@
               }
           }
 
+      window.addEventListener('offline', function(){
+        unityInstance.SendMessage("Data Manager", "NoNetwork");
+      });
+
+
       function startTimer() {
-        timeoutID = window.setTimeout(doInactive, 30000); // set timer to 5 seconds
+        timeoutID = window.setTimeout(doInactive, 60000); // set timer to 60 seconds
       }
 
       function resetTimer() {
